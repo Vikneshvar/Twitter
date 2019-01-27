@@ -7,11 +7,11 @@ except ImportError:
 # Import the tweepy library
 import tweepy
 
-consumer_key = "J5PXQdndY5uYURoH6HKjQVquO"
-consumer_secret = "XDprvdQhMIQu9VuhvTU0NEjCJMU9TouQ52vlStsY2gCkSdV5Yy"
+consumer_key = ""
+consumer_secret = ""
 
-access_token = "1028861674516705281-N5Smpi61z57bExUy0ymDdUJVHURAAo"
-access_token_seceret = "mcDZYyeoHub83TxlVjFGS1FDRtLjypQ0TS08g1zsj9qhc"
+access_token = ""
+access_token_seceret = ""
 
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
