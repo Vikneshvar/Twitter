@@ -1,18 +1,21 @@
-# Import the necessary package to process data in JSON format
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-# Import the tweepy library
+# Import the tweepy library and json
 import tweepy
+import simplejson as json
 
-consumer_key = ""
-consumer_secret = ""
+with open("/Users/vik_work/Desktop/Workspace/Twitter/keys.json") as f:
+    data=json.load(f)
 
-access_token = ""
-access_token_seceret = ""
+consumer_key = data["consumer_key"]
+consumer_secret = data["consumer_secret"]
 
+access_token = data["access_token"]
+access_token_seceret = data["access_token_seceret"]
+
+
+print(consumer_key)
+print(consumer_secret)
+print(access_token)
+print(access_token_seceret)
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_seceret)
