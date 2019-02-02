@@ -1,0 +1,14 @@
+<<<<<<< HEAD
+.vscode
+keys.jsons
+.rt.txt
+connect.py
+output.json
+trial.py
+trial2.py
+readMe.txt
+=======
+.vscode/launch.json
+.vscode/settings.json
+keys.json
+>>>>>>> bb3538af5461bcbcfaa2e97d5c3b4d5beba1b704
