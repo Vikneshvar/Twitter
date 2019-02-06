@@ -27,6 +27,40 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, 
 """
 for status in tweepy.Cursor(api.home_timeline).items(200):
 	print(status._json)
+if (not api):
+    print ('Problem connecting to API')
+
+for status in tweepy.Cursor(api.home_timeline).items(1):
+    print(status._json)
+
+# from geopy import geocoders
+from geopy.geocoders import Nominatim
+from geopy.exc import GeopyError
+
+# geolocator = Nominatim(user_agent='myapplication')
+geolocator = Nominatim()
+location = geolocator.geocode("California")
+if location:
+    latitude = location.latitude
+    longitude = location.longitude
+    print('\nLatitude =', latitude)
+    print('\nLongitude =', longitude)
+    TrendingClosest = api.trends_closest(latitude,longitude)
+    print('\nTrendingClosest = ', TrendingClosest)
+    woeid = [dic['woeid'] for dic in TrendingClosest]
+    woeid1 = ''.join(map(str,woeid))
+    print ('\nWOEID =', woeid1)
+
+    trending = api.trends_place(woeid1)
+    print('\nTRENDING in WOEID')
+    print(trending)
+    # for trending in api.trends_place(woeid1):
+    #     for trend in trending['trends']:
+    #         print('%s' % trend['name'])
+    hashtags = [x['name'] for x in trending[0]['trends'] if x['name']]
+    # hashtags = [x['name'] for x in trending[0]['trends'] if x['name'].startswith('#')]
+    hashtags1 = '\n'.join(map(str,hashtags))
+    print('\nHashTags:\n', hashtags1)
 
 trends1 = api.trends_place(id=2442047) # from the end of your code
 # trends1 is a list with only one element in it, which is a 
