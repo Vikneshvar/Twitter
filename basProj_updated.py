@@ -80,31 +80,31 @@ if location:
             print('\n', listSize)
             tweetCount = 0
             hashtagCount = 0
+
+            # Creating a json file with all tweets for each hashtag
+            json_str = '{"tweets":['
+            for li in frameList:
+                hashtag = str(li)
+                print('\n hashtag:', hashtag)
+                hashtag_str = '{"hashtag":'+hashtag+',"tweetInfo":['
+                json_str = json_str + hashtag_str
+                for tweet in tweepy.Cursor(api.search,q = hashtag, geocode = gcode, count=100, result_type="recent",
+                                            lang = "en").items(2):  
+                    json_str = json_str + jsonpickle.encode(tweet._json, unpicklable=False) + ','
+                    tweetCount += 1
+                hashtagCount+=1
+                if hashtagCount == len(frameList):
+                    json_str = json_str + "]}\n"
+                else:
+                    json_str = json_str + "]},\n"
+            json_str = json_str + "]}"
+            
+            # Make the json perfect by replacing some commas
+            json_str = re.sub("e}},]}","e}}]}",json_str)
+
+            # Write the json string to a output file
             with open('output.json', 'w') as f:
-                json_str = '{"tweets":['
                 f.write(json_str)
-                for li in frameList:
-                    hashtag = str(li)
-                    print('\n hashtag:', hashtag)
-                    hashtag_str = '{"hashtag":'+hashtag+',"tweetInfo":['
-                    f.write(hashtag_str)
-                    for tweet in tweepy.Cursor(api.search,q = hashtag, geocode = gcode, count=100, result_type="recent",
-                                                lang = "en").items(2):  
-                        f.write(jsonpickle.encode(tweet._json, unpicklable=False) + ',')
-                        tweetCount += 1
-                    hashtagCount+=1
-                    if hashtagCount == len(frameList):
-                        f.write("]}\n")
-                    else:
-                        f.write("]},\n")
-                f.write(']}')
-
-            with open('output.json', 'r') as f:
-                data = f.read().replace("e}},]}","e}}]}")
-                print("\ndata ", data)
-
-            with open('output.json', 'w') as f:
-                f.write(data)
     
             print('\nDownloaded {0} tweets'.format(tweetCount))
         else:
