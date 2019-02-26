@@ -109,12 +109,40 @@ from geopy.exc import GeopyError
 
 # geolocator = Nominatim(user_agent='myapplication')
 geolocator = Nominatim()
-location = geolocator.geocode('Austintown,Ohio')
+location = geolocator.geocode('Los Angeles,California')
 latitude = location.latitude
 longitude = location.longitude
 print('\nLatitude =', latitude)
 print('\nLongitude =', longitude)
+gcode = ""+str(latitude)+","+str(longitude)+",10mi"
 
+print("gcode: ",gcode)
+
+query = '#oscars'  
+page_count = 0
+tweet_count= 0 
+""" 
+for tweets in tweepy.Cursor(api.search, q=query, result_type="recent",
+                           include_entities=True, lang = "en", count=100,geocode = gcode).pages():  
+    page_count+= 1
+    print(page_count) 
+    print(len(tweets)) 
+    # print just the first tweet out of every page of 100 tweets  
+    print(tweets[0].text) 
+    print(tweets[0].created_at) 
+    # stop after retrieving 200 pages  
+    if page_count >= 3:  
+        break
+"""
+for tweets in tweepy.Cursor(api.search, q=query, result_type="recent",
+                            lang = "en", count=100,geocode = gcode).items():  
+    tweet_count+= 1
+    print(tweet_count)
+    print(tweets.place) 
+    # print just the first tweet out of every page of 100 tweets  
+#    print(tweets.count) 
+#    print(tweet.created_at)
+#    break; 
 
 """
 
