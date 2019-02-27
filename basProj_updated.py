@@ -103,7 +103,7 @@ if location:
             json_str = re.sub("e}},]}","e}}]}",json_str)
 
             # Write the json string to a output file
-            with open('output.json', 'w') as f:
+            with open("C:/Users/vikneshvar.chandraha/Dev/Twitter_dataset/output.json", 'w') as f:
                 f.write(json_str)
     
             print('\nDownloaded {0} tweets'.format(tweetCount))
