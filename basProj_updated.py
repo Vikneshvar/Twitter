@@ -89,7 +89,7 @@ if location:
                 hashtag_str = '{"hashtag":'+hashtag+',"tweetInfo":['
                 json_str = json_str + hashtag_str
                 for tweet in tweepy.Cursor(api.search,q = hashtag, geocode = gcode, count=100, result_type="recent",
-                                            lang = "en").items(2):  
+                                            lang = "en").items():  
                     json_str = json_str + jsonpickle.encode(tweet._json, unpicklable=False) + ','
                     tweetCount += 1
                 hashtagCount+=1
