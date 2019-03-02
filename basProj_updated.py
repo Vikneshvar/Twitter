@@ -44,7 +44,7 @@ if location:
     longitude = location.longitude
     # print('\nLatitude =', latitude)
     # print('\nLongitude =', longitude)
-    gcode = ""+str(latitude)+","+str(longitude)+",10mi"
+    gcode = ""+str(latitude)+","+str(longitude)+",50mi"
     # print("gcode: ",gcode)
 
     TrendingClosest = api.trends_closest(latitude,longitude)
@@ -63,50 +63,74 @@ if location:
 
             placeResponce = api.reverse_geocode(latitude,longitude);
             placeResponce = str(placeResponce)
-            print('\nplaceResponce:', placeResponce)
+            # print('\nplaceResponce:', placeResponce)
             matchObj = re.findall(r"id='(\w+)'",placeResponce)
             place_id = matchObj[0]
-            print('place_id', place_id)
+            # print('place_id', place_id)
 
 
             frameList = []
-            for l in hashtags:
+            for l in hashtags[0:1]:
                 if l.startswith('#'):
                     frameList.append('\"'+l+'\"')
                 else:
                     frameList.append('\"' + l + '\"')
-            print('\nFrameList :',frameList)
+            # print('\nFrameList :',frameList)
             listSize = len(frameList)
-            print('\n', listSize)
-            tweetCount = 0
+            # print('\n', listSize)
+            tweetCount_all = 0
+            tweetCount_noRetweet = 0
             hashtagCount = 0
 
             # Creating a json file with all tweets for each hashtag
-            json_str = '{"tweets":['
+            # json string for all taking all tweets
+            json_str_all = '{"tweets":['
+            # json string that doesnt take retweeted tweets
+            json_str_noRe = '{"tweets":['
             for li in frameList:
                 hashtag = str(li)
                 print('\n hashtag:', hashtag)
                 hashtag_str = '{"hashtag":'+hashtag+',"tweetInfo":['
-                json_str = json_str + hashtag_str
+                json_str_all = json_str_all + hashtag_str
+                json_str_noRe = json_str_noRe + hashtag_str
+
                 for tweet in tweepy.Cursor(api.search,q = hashtag, geocode = gcode, count=100, result_type="recent",
-                                            lang = "en").items():  
-                    json_str = json_str + jsonpickle.encode(tweet._json, unpicklable=False) + ','
-                    tweetCount += 1
+                                            lang = "en").items(100):
+                    json_encoded = jsonpickle.encode(tweet._json, unpicklable=False)
+                    json_object = json.loads(json_encoded)
+
+                    json_str_all = json_str_all + json_encoded + ','
+                    tweetCount_all += 1
+
+                    # If "retweeted_status" key is present in the json response, then its a retweet.
+                    if "retweeted_status" not in json_object:
+                        json_str_noRe = json_str_noRe + json_encoded + ','
+                        tweetCount_noRetweet += 1
+                    
+                
                 hashtagCount+=1
                 if hashtagCount == len(frameList):
-                    json_str = json_str + "]}\n"
+                    json_str_all = json_str_all + "]}\n"
+                    json_str_noRe = json_str_noRe + "]}\n"
                 else:
-                    json_str = json_str + "]},\n"
-            json_str = json_str + "]}"
+                    json_str_all = json_str_all + "]},\n"
+                    json_str_noRe = json_str_noRe + "]},\n"
+            json_str_all = json_str_all + "]}"
+            json_str_noRe = json_str_noRe + "]}"
             
             # Make the json perfect by replacing some commas
-            json_str = re.sub("e}},]}","e}}]}",json_str)
+            json_str_all = re.sub("e}},]}","e}}]}",json_str_all)
+            json_str_noRe = re.sub("e}},]}","e}}]}",json_str_noRe)
 
             # Write the json string to a output file
-            with open("C:/Users/vikneshvar.chandraha/Dev/Twitter_dataset/output.json", 'w') as f:
-                f.write(json_str)
-    
-            print('\nDownloaded {0} tweets'.format(tweetCount))
+            with open("C:/Users/vikneshvar.chandraha/Dev/Twitter_dataset/output_all.json", 'w') as f:
+                f.write(json_str_all)
+
+            with open("C:/Users/vikneshvar.chandraha/Dev/Twitter_dataset/output_noRe.json", 'w') as f:
+                f.write(json_str_noRe)
+
+            print('\ntweetCount_noRetweet',tweetCount_noRetweet)
+            print('\n tweetCount', tweetCount_all)
         else:
             print('\nNo Trending Hashtags!')
     else:
