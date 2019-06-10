@@ -36,7 +36,7 @@ def do_geocode(address):
 
 
 #city_state_country = ""+ each["city"]+", "+each["state"]+", "+each["country"]
-city_state_country = "Fullerton, California, USA"
+city_state_country = "Los Angeles, California, USA"
 location = do_geocode(city_state_country)
 
 if location:
@@ -75,9 +75,12 @@ if location:
                     frameList.append('\"'+l+'\"')
                 else:
                     frameList.append('\"' + l + '\"')
-            # print('\nFrameList :',frameList)
+            print('\nFrameList :',frameList)
             listSize = len(frameList)
             # print('\n', listSize)
+
+            frameList2=['\"meal\"']
+            print('frameList2 :',frameList2)
             tweetCount_all = 0
             tweetCount_noRetweet = 0
             hashtagCount = 0
@@ -87,7 +90,7 @@ if location:
             json_str_all = '{"tweets":['
             # json string that doesnt take retweeted tweets
             json_str_noRe = '{"tweets":['
-            for li in frameList:
+            for li in frameList2:
                 hashtag = str(li)
                 print('\n hashtag:', hashtag)
                 hashtag_str = '{"hashtag":'+hashtag+',"tweetInfo":['
@@ -95,7 +98,7 @@ if location:
                 json_str_noRe = json_str_noRe + hashtag_str
 
                 for tweet in tweepy.Cursor(api.search,q = hashtag, geocode = gcode, count=100, result_type="recent",
-                                            lang = "en").items(100):
+                                            lang = "en").items():
                     json_encoded = jsonpickle.encode(tweet._json, unpicklable=False)
                     json_object = json.loads(json_encoded)
 

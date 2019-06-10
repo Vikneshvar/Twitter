@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import json 
 import re
+import nltk
 from nltk.util import ngrams
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
@@ -9,6 +10,9 @@ from collections import Counter
 
 def textClen(tweets_list):
     # print("In cleaning")
+    # Stop words
+    stops = stopwords.words('english')
+    print("stops------>>>>>>",stops)
     ngramList = []
     # Remove all non-alpha characters except period, @, #, blank space
     regex1 = re.compile('[^a-zA-Z.@# ]')
@@ -24,6 +28,7 @@ def textClen(tweets_list):
         each_tweet = regex3.sub('',each_tweet)
         each_tweet = regex4.sub('',each_tweet)
         each_tweet = each_tweet.lower()
+        
         processedSentenceList = each_tweet.split('.')
 
         # Count number of words
@@ -32,7 +37,7 @@ def textClen(tweets_list):
         dict_output={}
         dict_output['string']=each_tweet
         dict_output['count']=len(tokens)
-        print("dict_output",dict_output)
+        # print("dict_output",dict_output)
 
         for sentence in processedSentenceList:
             ng_list = []
@@ -44,7 +49,9 @@ def textClen(tweets_list):
             if len(item)>1:
                 ngramList.append(item)
 
-    return ngramList
+    ngramList2 = [x for x in ngramList if x not in stops]   
+
+    return ngramList2
 
 
 # Create ngrams of one words only - coz we are removing only one words from the text
@@ -72,12 +79,13 @@ with open("C:/Users/vikneshvar.chandraha/Dev/Twitter_dataset/output_noRe.json") 
     # print(tweets_list)
 
 ngramList = textClen(tweets_list)
-print("ngramList------>>>>>>",ngramList)
+# print("ngramList------>>>>>>",ngramList)
 
 counts = {}
-counts = Counter(ngramList).most_common(10)
+counts = Counter(ngramList).most_common(100)
 
 print("counts------>>>>>>",counts)
+
 
 
 
